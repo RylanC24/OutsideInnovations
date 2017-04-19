@@ -441,6 +441,9 @@ def test_feature_impute(df, train_df):
         for idx, row in df.iterrows()
     ]
 
+    # Drop the OF columns used to define the success criteria
+    df.drop('LifetimeMax', axis=1, inplace=True)
+    df.drop('LifetimeRemaining', axis=1, inplace=True)
 
     # Define columns to be encoded
     encoded_columns = [
