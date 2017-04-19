@@ -1,10 +1,8 @@
 import pandas as pd
 import numpy as np
-
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.externals import joblib
-
-from .feature_extraction_utilities import build_set, train_feature_impute
+from feature_extraction_utilities import build_set, train_feature_impute
 
 
 if __name__ == '__main__':
