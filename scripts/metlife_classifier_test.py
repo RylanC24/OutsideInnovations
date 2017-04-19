@@ -5,6 +5,9 @@ from sklearn.externals import joblib
 from feature_extraction_utilities import build_set, test_feature_impute
 
 
+EXCLUSIONS = True
+
+
 if __name__ == '__main__':
     train_date_range = '20140516_20170331'
     test_date_range = '20170401_20170417'
@@ -56,13 +59,14 @@ if __name__ == '__main__':
     df_results = test_df
     df_results['Predict'] = predictions
 
-    df_results['Predict'] = [
-        0
-        if row['Exclusion']
-        else
-        row['Predict']
-        for idx, row in df_results.iterrows()
-    ]
+    if EXCLUSIONS:
+        df_results['Predict'] = [
+            0
+            if row['Exclusion']
+            else
+            row['Predict']
+            for idx, row in df_results.iterrows()
+        ]
 
     # Save results to file
     df_results.to_csv(output_file, index=False)
