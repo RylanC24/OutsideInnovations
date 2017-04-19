@@ -9,15 +9,16 @@ if __name__ == '__main__':
     train_date_range = '20140516_20170331'
 
     # Input data files
-    sql_file = '../sql_data/Flat_MetLife_wEDI_SQLv9_EmptyCol.csv'
+#    sql_file = '../sql_data/Flat_MetLife_wEDI_SQLv9_EmptyCol.csv'
+    sql_file = '../sql_data/4-18-2017FlatDataV9.csv'
     train_html_file = '../edi_data/parsed_data/metlife_' + train_date_range + '.csv'
 
     # Output data files
     raw_training_data_file = '../training_data/input_raw_ediHTML_ofSQL_' + train_date_range + '.csv'
-    cleaned_training_data_file = '../training_data/input_cleaned_ediHTML_ofSQL_' + train_date_range + '.csv'
+    cleaned_training_data_file = '../training_data/input_cleaned_ediHTML_ofSQL_noRounding_' + train_date_range + '.csv'
 
     # Serialized classifier output file
-    classifier_file = '../trained_classifiers/ExtraTrees_nf1000_' + train_date_range + '.pkl'
+    classifier_file = '../trained_classifiers/ExtraTrees_nf1000_noRounding_' + train_date_range + '.pkl'
 
     # Create joined dataset
     train_df = build_set(sql_file, train_html_file)
@@ -42,7 +43,7 @@ if __name__ == '__main__':
                                 'EDI_only',
                                 'Exclusion',
                                 'InsurancePolicyPatientEligibilityId'
-                            ]
+                             ]
         ]
     ].values
 

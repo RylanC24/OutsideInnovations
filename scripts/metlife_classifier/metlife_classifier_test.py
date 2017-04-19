@@ -13,17 +13,17 @@ if __name__ == '__main__':
     test_date_range = '20170401_20170417'
 
     # Input data files
-    sql_file = '../sql_data/Flat_MetLife_wEDI_SQLv9_EmptyCol.csv'
+    sql_file = '../sql_data/4-18-2017FlatDataV9.csv'
     test_html_file = '../edi_data/parsed_data/metlife_' + test_date_range + '.csv'
-    train_file = '../training_data/input_cleaned_ediHTML_ofSQL_' + train_date_range + '.csv'
+    train_file = '../training_data/input_cleaned_ediHTML_ofSQL_noRounding_' + train_date_range + '.csv'
 
     # Output data files
-    raw_test_data_file = '../test_data/input_raw_ediHTML_ofSQL_' + test_date_range + '.csv'
-    cleaned_test_data_file = '../test_data/input_cleaned_ediHTML_ofSQL_' + test_date_range + '.csv'
-    output_file = '../test_data/output_ExtraTrees_nf1000_' + test_date_range + '.csv'
+    raw_test_data_file = '../test_data/input_raw_ediHTML_ofSQL_v2' + test_date_range + '.csv'
+    cleaned_test_data_file = '../test_data/input_cleaned_ediHTML_ofSQL_noRounding_' + test_date_range + '.csv'
+    output_file = '../test_data/output_wExclusions_ExtraTrees_nf1000_noRounding_' + test_date_range + '.csv'
 
     # Serialized classifier output file
-    classifier_file = '../trained_classifiers/ExtraTrees_nf1000_' + train_date_range + '.pkl'
+    classifier_file = '../trained_classifiers/ExtraTrees_nf1000_noRounding_' + train_date_range + '.pkl'
 
     # Create joined dataset
     test_df = build_set(sql_file, test_html_file)
