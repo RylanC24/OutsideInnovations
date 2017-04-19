@@ -362,8 +362,10 @@ def train_feature_impute(df):
     # Create the target vector
     df['EDI_only'] = [
         1
-        if (row['LifeTimeMaxValue'] == row['LifetimeMax']
-            and row['LifeTimeRemainingValue'] == row['LifetimeRemaining']
+        if (row['LifetimeMax'] - 1 <= row['LifeTimeMaxValue']
+            and row['LifeTimeMaxValue'] <= row['LifetimeMax'] + 1
+            and row['LifetimeRemaining'] - 1 <= row['LifeTimeRemainingValue']
+            and row['LifeTimeRemainingValue'] <= row['LifetimeRemaining'] + 1
             and not row['Exclusion'])
         else
         0
@@ -431,8 +433,10 @@ def test_feature_impute(df, train_df):
     # Create the target vector
     df['EDI_only'] = [
         1
-        if (row['LifeTimeMaxValue'] == row['LifetimeMax']
-            and row['LifeTimeRemainingValue'] == row['LifetimeRemaining']
+        if (row['LifetimeMax'] - 1 <= row['LifeTimeMaxValue']
+            and row['LifeTimeMaxValue'] <= row['LifetimeMax'] + 1
+            and row['LifetimeRemaining'] - 1 <= row['LifeTimeRemainingValue']
+            and row['LifeTimeRemainingValue'] <= row['LifetimeRemaining'] + 1
             and not row['Exclusion'])
         else
         0
