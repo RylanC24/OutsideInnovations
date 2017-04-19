@@ -13,8 +13,8 @@ if __name__ == '__main__':
     train_html_file = '../edi_data/parsed_data/metlife_' + train_date_range + '.csv'
 
     # Output data files
-    raw_training_data_file = '../training_data/raw_ediHTML_ofSQL_' + train_date_range + '.csv'
-    cleaned_training_data_file = '../training_data/cleaned_ediHTML_ofSQL_' + train_date_range + '.csv'
+    raw_training_data_file = '../training_data/input_raw_ediHTML_ofSQL_' + train_date_range + '.csv'
+    cleaned_training_data_file = '../training_data/input_cleaned_ediHTML_ofSQL_' + train_date_range + '.csv'
 
     # Serialized classifier output file
     classifier_file = '../trained_classifiers/ExtraTrees_nf1000_' + train_date_range + '.pkl'
