@@ -38,7 +38,11 @@ if __name__ == '__main__':
         [
             column
             for column in train_df.columns
-            if column not in ['EDI_only', 'Exclusion']
+            if column not in [
+                                'EDI_only',
+                                'Exclusion',
+                                'InsurancePolicyPatientEligibilityId'
+                            ]
         ]
     ].values
 
