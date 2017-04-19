@@ -357,21 +357,6 @@ def train_feature_impute(df):
     drop_columns(df, binary_columns)
     df = pd.concat([df, df_binary], axis=1)
 
-    # Check for exclusion cases
-    df['Exclusion'] = df.apply(
-        lambda row:
-        exclusion_case(
-            row['PatientDateOfBirth'],
-            row['StudentStatus'],
-            row['IsPreAuthRequired'],
-            row['AgeMax'],
-            row['AgeMaxStudent'],
-            row['WaitPeriod'],
-            row['LifeTimeMaxValue'],
-            row['LifeTimeRemainingValue']
-        ),
-        axis=1
-    )
 
     # Create the target vector
     df['EDI_only'] = [
@@ -399,3 +384,121 @@ def train_feature_impute(df):
     df_encoded = pd.get_dummies(df, sparse=False)
 
     return df_encoded
+
+
+def test_feature_impute(df, train_df):
+    """ A function to clean the test data and impute based on the training data
+
+    Args:
+        df (Pandas DataFrame object): the dataframe containing the data to
+                                      be cleaned.
+        train_df (Pandas DataFrame object): the dataframe containing the data
+                                            to impute from.
+    Returns:
+        test_df (Pandas DataFrame object): dataframe containing the extracted
+                                           test data
+        sanity_df (Pandas DataFrame object): dataframe containing sanity check
+                                             columns (useful for determining
+                                             cause of false positives)
+    """
+
+    # Filter out everything but MetLife claims
+    df = df[df['CarrierName'] == 'MetLife']
+
+    # Drop the 'CarrierName' column since we're only looking at MetLife
+    df.drop('CarrierName', axis=1, inplace=True)
+
+    # Convert PatientDateOfBirth to Patient Age
+    df['PatientAge'] = df['PatientDateOfBirth'].apply(
+        lambda row: int(
+            (date.today() - datetime.strptime(row, '%m/%d/%Y').date()).days / 365.25
+        )
+    )
+
+    # Check for exclusion cases
+    df['Exclusion'] = df.apply(
+        lambda row:
+        exclusion_case(
+            row['PatientDateOfBirth'],
+            row['StudentStatus'],
+            row['IsPreAuthRequired'],
+            row['AgeMax'],
+            row['AgeMaxStudent'],
+            row['WaitPeriod'],
+            row['LifeTimeMaxValue'],
+            row['LifeTimeRemainingValue']
+        ),
+        axis=1
+    )
+
+    # Create the target vector
+    df['EDI_only'] = [
+        1
+        if (row['LifeTimeMaxValue'] == row['LifetimeMax']
+            and row['LifeTimeRemainingValue'] == row['LifetimeRemaining']
+            and not row['Exclusion'])
+        else
+        0
+        for idx, row in df.iterrows()
+    ]
+
+    # Create sanity check dataframe before dropping columns
+    sanity_df = df[
+        'LifetimeMax',
+        'LifetimeRemaining',
+        'Exclusion',
+        'InsurancePolicyPatientEligibilityId'
+    ]
+
+    # Define columns to be encoded
+    encoded_columns = [
+        'CoordinationOfBenefits',
+        'RelationshipToSubscriber',
+        'StudentStatus',
+        'SubscriberState'
+    ]
+
+    # Encode Coordination of Benefits into three categories:
+    # 1: 'one', 2: 'two', and NaN: 'null'
+    # We will have to encode these using one-hot-encoding
+    df['CoordinationOfBenefits'].replace(
+        to_replace=[np.NaN, 1.0, 2.0],
+        value=['null', 'one', 'two'],
+        inplace=True
+    )
+
+    # Replace True/False in WaitPeriod with 1/0
+    df['WaitPeriod'].replace(
+        to_replace=[True, False],
+        value=[1, 0],
+        inplace=True
+    )
+
+    # Convert remaining object columns, except encoded_columns to binary
+    binary_columns = [
+        column
+        for column in sorted(df.columns)
+        if df[column].dtype == 'object' and column
+    ]
+    binary_columns = list(set(binary_columns).difference(encoded_columns))
+    df_binary = df[binary_columns].notnull().astype('uint8')
+    drop_columns(df, binary_columns)
+    df = pd.concat([df, df_binary], axis=1)
+
+    # Perform one-hot-encoding on remaining object columns
+    df_encoded = pd.get_dummies(df, sparse=False)
+
+    # Setup blank test data dataframe
+    test_df = pd.Dataframe(columns=train_df.columns)
+
+    # Assign all existing data from imported dataframe to test dataframe
+    for column in train_df.columns:
+        if column in df_encoded.columns:
+            test_df[column] = df_encoded[column]
+        else:
+            test_df[column] = 0
+
+    # Replace null values with median of training data
+    test_df.fillna(train_df.median(), inplace=True)
+
+    return test_df, sanity_df
