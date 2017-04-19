@@ -373,10 +373,6 @@ def train_feature_impute(df):
     df.drop('LifetimeMax', axis=1, inplace=True)
     df.drop('LifetimeRemaining', axis=1, inplace=True)
 
-    # Drop the IPPEID column used to join the different tables if it exists
-    if 'InsurancePolicyPatientEligibilityId' in df.columns:
-        df.drop('InsurancePolicyPatientEligibilityId', axis=1, inplace=True)
-
     # Replace null values with the median value of the column
     df.fillna(df.median(), inplace=True)
 
