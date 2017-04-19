@@ -41,7 +41,7 @@ if __name__ == '__main__':
     X = test_df[
         [
             column
-            for column in train_df.columns
+            for column in test_df.columns
             if column not in ['EDI_only', 'Exclusion']
         ]
     ].values
@@ -55,6 +55,14 @@ if __name__ == '__main__':
     # Save results of classifier into dataframe
     df_results = test_df
     df_results['Predict'] = predictions
+
+    df_results['Predict'] = [
+        0
+        if row['Exclusion']
+        else
+        row['Predict']
+        for idx, row in df_results.iterrows()
+    ]
 
     # Save results to file
     df_results.to_csv(output_file, index=False)
