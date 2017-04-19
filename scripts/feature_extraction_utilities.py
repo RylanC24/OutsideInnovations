@@ -278,6 +278,22 @@ def train_feature_impute(df):
         )
     )
 
+    # Check for exclusion cases
+    df['Exclusion'] = df.apply(
+        lambda row:
+        exclusion_case(
+            row['PatientDateOfBirth'],
+            row['StudentStatus'],
+            row['IsPreAuthRequired'],
+            row['AgeMax'],
+            row['AgeMaxStudent'],
+            row['WaitPeriod'],
+            row['LifeTimeMaxValue'],
+            row['LifeTimeRemainingValue']
+        ),
+        axis=1
+    )
+
     # All datetime columns
     datetime_columns = [
         'CreatedOn',
@@ -330,22 +346,6 @@ def train_feature_impute(df):
         inplace=True
     )
 
-    # Check for exclusion cases
-    df['Exclusion'] = df.apply(
-        lambda row:
-        exclusion_case(
-            row['PatientDateOfBirth'],
-            row['StudentStatus'],
-            row['IsPreAuthRequired'],
-            row['AgeMax'],
-            row['AgeMaxStudent'],
-            row['WaitPeriod'],
-            row['LifeTimeMaxValue'],
-            row['LifeTimeRemainingValue']
-        ),
-        axis=1
-    )
-
     # Convert remaining object columns, except encoded_columns to binary
     binary_columns = [
         column
@@ -356,7 +356,6 @@ def train_feature_impute(df):
     df_binary = df[binary_columns].notnull().astype('uint8')
     drop_columns(df, binary_columns)
     df = pd.concat([df, df_binary], axis=1)
-
 
     # Create the target vector
     df['EDI_only'] = [
