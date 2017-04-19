@@ -120,7 +120,8 @@ def build_set(sql_file, html_file):
     return df_joined
 
 
-def exclusion_case(dob, student_status, pre_auth, age_max, age_max_student, wait_period):
+def exclusion_case(dob, student_status, pre_auth, age_max, age_max_student,
+                   wait_period, lifetime_max_value, lifetime_remaining_value):
     """Determine whether a given EDI check should be classified by one of the
     exclusion cases.
 
@@ -152,6 +153,10 @@ def exclusion_case(dob, student_status, pre_auth, age_max, age_max_student, wait
 
     # Student statuses
     student_statuses = ['PartTime', 'FullTime']
+
+    # Check to see if lifetime max value or lifetime remaining value are null
+    if pd.isnull(lifetime_max_value) or pd.isnull(lifetime_remaining_value):
+        return True
 
     # Check for the wait period exception
     if wait_period:
@@ -325,6 +330,22 @@ def train_feature_impute(df):
         inplace=True
     )
 
+    # Check for exclusion cases
+    df['Exclusion'] = df.apply(
+        lambda row:
+        exclusion_case(
+            row['PatientDateOfBirth'],
+            row['StudentStatus'],
+            row['IsPreAuthRequired'],
+            row['AgeMax'],
+            row['AgeMaxStudent'],
+            row['WaitPeriod'],
+            row['LifeTimeMaxValue'],
+            row['LifeTimeRemainingValue']
+        ),
+        axis=1
+    )
+
     # Convert remaining object columns, except encoded_columns to binary
     binary_columns = [
         column
@@ -345,7 +366,9 @@ def train_feature_impute(df):
             row['IsPreAuthRequired'],
             row['AgeMax'],
             row['AgeMaxStudent'],
-            row['WaitPeriod']
+            row['WaitPeriod'],
+            row['LifeTimeMaxValue'],
+            row['LifeTimeRemainingValue']
         ),
         axis=1
     )
