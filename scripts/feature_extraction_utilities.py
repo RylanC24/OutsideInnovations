@@ -56,7 +56,8 @@ def build_set(sql_file, html_file):
     ]
 
     for col in obj_2_float_col:
-        df_html[col] = df_html[col].str.translate({ord(','): None}).astype('float')
+        if df_html[col].dtype == 'object':
+            df_html[col] = df_html[col].str.translate({ord(','): None}).astype('float')
 
     # Drop some columns that are blank in HTML before determining query columns
     # to merge. Info for these columns is more complete in query
