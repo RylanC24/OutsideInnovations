@@ -251,7 +251,8 @@ def train_feature_impute(df):
     saved_columns = [
         'InsurancePlanPriorityId',
         'PayerId',
-        'PatientDateOfBirth'
+        'PatientDateOfBirth',
+        'InsurancePolicyPatientEligibilityId'
     ]
 
     # Drop ID columns.
