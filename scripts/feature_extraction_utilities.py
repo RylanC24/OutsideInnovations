@@ -77,6 +77,7 @@ def build_set(sql_file, html_file):
     # Drop entries with duplicate IPPEIDs from parsed HTML data
     df_html.drop_duplicates(
         ['InsurancePolicyPatientEligibilityId'],
+        keep=False,
         inplace=True
     )
 
