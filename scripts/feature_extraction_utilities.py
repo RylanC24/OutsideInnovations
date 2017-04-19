@@ -484,7 +484,7 @@ def test_feature_impute(df, train_df):
     df_encoded = pd.get_dummies(df, sparse=False)
 
     # Setup blank test data dataframe
-    test_df = pd.Dataframe(columns=train_df.columns)
+    test_df = pd.DataFrame(columns=train_df.columns)
 
     # Assign all existing data from imported dataframe to test dataframe
     for column in train_df.columns:
