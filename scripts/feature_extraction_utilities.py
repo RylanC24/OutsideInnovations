@@ -441,13 +441,6 @@ def test_feature_impute(df, train_df):
         for idx, row in df.iterrows()
     ]
 
-    # Create sanity check dataframe before dropping columns
-    sanity_df = df[
-        'LifetimeMax',
-        'LifetimeRemaining',
-        'Exclusion',
-        'InsurancePolicyPatientEligibilityId'
-    ]
 
     # Define columns to be encoded
     encoded_columns = [
@@ -500,4 +493,4 @@ def test_feature_impute(df, train_df):
     # Replace null values with median of training data
     test_df.fillna(train_df.median(), inplace=True)
 
-    return test_df, sanity_df
+    return test_df
