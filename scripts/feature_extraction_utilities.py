@@ -292,7 +292,6 @@ def train_feature_impute(df):
         'SubscriberDOB',
         'UpdatedOn',
         'UpdatedOn.1',
-        'PatientDateOfBirth'
     ]
 
     # Remove any that are in saved_columns
